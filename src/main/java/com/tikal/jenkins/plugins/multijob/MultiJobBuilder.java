@@ -60,10 +60,12 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 			BuildListener listener) throws InterruptedException, IOException {
 		Hudson hudson = Hudson.getInstance();
 		MultiJobBuild thisBuild = (MultiJobBuild) build;
+		int parentBuildNumber = thisBuild.getNumber();							// Grab the parent build number
 		MultiJobProject thisProject = thisBuild.getProject();
 		Map<AbstractProjectKey, PhaseJobsConfig> projects = new HashMap<AbstractProjectKey, PhaseJobsConfig>(
 				phaseJobs.size());
 
+		//listener.getLogger().printf("inside perform method\n" );
 		for (PhaseJobsConfig project : phaseJobs) {
 			TopLevelItem item = hudson.getItem(project.getJobName());
 			if (item instanceof AbstractProject) {
@@ -76,12 +78,22 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		List<AbstractProject> projectList = new ArrayList<AbstractProject>();
 		for (AbstractProjectKey projectKey : projects.keySet()) {
 			AbstractProject project = projectKey.getProject();
+			
+			// Set this the same as the parent build number
+			//project.updateNextBuildNumber( parentBuildNumber);
+			
 			listener.getLogger().printf(
 					"Starting build job %s.\n",
 					HyperlinkNote.encodeTo('/' + project.getUrl(),
 							project.getFullName()));
 
 			PhaseJobsConfig projectConfig = projects.get(projectKey);
+			
+			listener.getLogger().printf("Value: " + projectConfig.isSyncBuildNumber() + "\n" );
+			// Set subjob build number the same as the parent build number
+			if( projectConfig.isSyncBuildNumber() )
+				project.updateNextBuildNumber(parentBuildNumber);
+			
 			List<Action> actions = new ArrayList<Action>();
 			prepareActions(build, project, projectConfig, listener, actions);
 			Future future = project.scheduleBuild2(project.getQuietPeriod(),
@@ -101,7 +113,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 			for (Future future : futuresList) {
 				AbstractProject project = projectList.get(futuresList
 						.indexOf(future));
-				if (future.isDone() && !future.isCancelled()) {
+				if (future.isDone()) {
 					try {
 						AbstractBuild jobBuild = (AbstractBuild) future.get();
 						Result result = jobBuild.getResult();
@@ -175,7 +187,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		
 		String jobName = jobBuild.getProject().getName();
 		String jobNameSafe = jobName.replaceAll("[^A-Za-z0-9]", "_").toUpperCase();
-		String buildNumber = Integer.toString(jobBuild.getNumber());
+		String buildNumber = Integer.toString(jobBuild.getNumber());		
 		String buildResult = jobBuild.getResult().toString();
 		
 		// These will always reference the last build

@@ -3,7 +3,11 @@
 		<f:entry title="Phase name" field="phaseName"
                 help="/plugin/jenkins-multijob-plugin/help-phaseName.html">
 			<f:textbox name="phaseName" value="${instance.phaseName}" />
-		</f:entry>
+		</f:entry> 					
+		<f:entry title="Synchronize Build Numbers" field="syncBuildNumbers"
+					help="/plugin/jenkins-multijob-plugin/help-syncBuildNumbers.html">
+  					<f:checkbox name="syncBuildNumbers" checked="${instance.syncBuildNumbers}" default="false"/>
+  		</f:entry>
 		<f:entry title="Phase jobs" field="phaseJobs">
     		<f:repeatable field="phaseJobs" noAddButton="true" minimum="1">
     			<table width="100%">
@@ -25,6 +29,7 @@
 						help="/plugin/jenkins-multijob-plugin/help-currParams.html">
   						<f:checkbox name="currParams" checked="${instance.currParams}" default="true"/>
   					</f:entry>
+ 
   					<f:entry title="Exposed SCM" field="exposedSCM"
 						help="/plugin/jenkins-multijob-plugin/help-repository.html">
   						<f:checkbox name="exposedSCM" checked="${instance.exposedSCM}" default="true"/>

@@ -174,7 +174,7 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 			this.parentJobName = parentJobName;
 			this.parentBuildNumber = parentBuildNumber;
 			this.jobName = jobName;
-			this.buildNumber = buildNumber;
+			this.buildNumber = buildNumber;  
 			this.phaseName = phaseName;
 		}
 
