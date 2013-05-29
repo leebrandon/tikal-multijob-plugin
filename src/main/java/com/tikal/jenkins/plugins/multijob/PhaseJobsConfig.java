@@ -45,7 +45,7 @@ public class PhaseJobsConfig implements Describable<PhaseJobsConfig> {
 	private String jobName;
 	private String jobProperties;
 	private boolean currParams;
-	private boolean syncBuildNumbers;
+	public boolean syncBuildNumbers;
 	private boolean exposedSCM;
 	private List<AbstractBuildParameters> configs;
 
@@ -57,12 +57,13 @@ public class PhaseJobsConfig implements Describable<PhaseJobsConfig> {
 		this.exposedSCM = exposedSCM;
 	}
 	
-	public boolean isSyncBuildNumber() {
-		return syncBuildNumbers;	
-	}
-	
 	public boolean isCurrParams() {
 		return currParams;
+	}
+	
+	public boolean isSyncBuildNumbers()
+	{
+		return syncBuildNumbers;
 	}
 
 	public void setCurrParams(boolean currParams) {
@@ -95,10 +96,9 @@ public class PhaseJobsConfig implements Describable<PhaseJobsConfig> {
 
 	@DataBoundConstructor
 	public PhaseJobsConfig(String jobName, String jobProperties,
-			boolean syncBuildNumbers, boolean currParams, List<AbstractBuildParameters> configs) {
+			boolean currParams, List<AbstractBuildParameters> configs) {
 		this.jobName = jobName;
 		this.jobProperties = jobProperties;
-		this.syncBuildNumbers = syncBuildNumbers;
 		this.currParams = currParams;
 		this.configs = Util.fixNull(configs);
 	}

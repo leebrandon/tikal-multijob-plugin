@@ -43,13 +43,15 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 
 	private String phaseName;
+	public boolean syncBuildNumbers;
 	private List<PhaseJobsConfig> phaseJobs;
 	private ContinuationCondition continuationCondition = ContinuationCondition.SUCCESSFUL;
 
 	@DataBoundConstructor
-	public MultiJobBuilder(String phaseName, List<PhaseJobsConfig> phaseJobs,
+	public MultiJobBuilder(String phaseName, boolean syncBuildNumbers, List<PhaseJobsConfig> phaseJobs,
 			ContinuationCondition continuationCondition) {
 		this.phaseName = phaseName;
+		this.syncBuildNumbers = syncBuildNumbers;
 		this.phaseJobs = Util.fixNull(phaseJobs);
 		this.continuationCondition = continuationCondition;
 	}
@@ -65,7 +67,6 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		Map<AbstractProjectKey, PhaseJobsConfig> projects = new HashMap<AbstractProjectKey, PhaseJobsConfig>(
 				phaseJobs.size());
 
-		//listener.getLogger().printf("inside perform method\n" );
 		for (PhaseJobsConfig project : phaseJobs) {
 			TopLevelItem item = hudson.getItem(project.getJobName());
 			if (item instanceof AbstractProject) {
@@ -89,10 +90,13 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 
 			PhaseJobsConfig projectConfig = projects.get(projectKey);
 			
-			listener.getLogger().printf("Value: " + projectConfig.isSyncBuildNumber() + "\n" );
-			// Set subjob build number the same as the parent build number
-			if( projectConfig.isSyncBuildNumber() )
+			
+			// Set subjob build number the same as the parent build number, if syncBuildNumbers checkbox is true
+			if( syncBuildNumbers )
+			{
+				listener.getLogger().printf("Synchronizing build numbers for all downstream jobs\n");
 				project.updateNextBuildNumber(parentBuildNumber);
+			}
 			
 			List<Action> actions = new ArrayList<Action>();
 			prepareActions(build, project, projectConfig, listener, actions);
