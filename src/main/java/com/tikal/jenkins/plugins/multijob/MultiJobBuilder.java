@@ -88,14 +88,19 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 					HyperlinkNote.encodeTo('/' + project.getUrl(),
 							project.getFullName()));
 
-			PhaseJobsConfig projectConfig = projects.get(projectKey);
-			
+			PhaseJobsConfig projectConfig = projects.get(projectKey);			
 			
 			// Set subjob build number the same as the parent build number, if syncBuildNumbers checkbox is true
 			if( syncBuildNumbers )
 			{
-				listener.getLogger().printf("Synchronizing build numbers for all downstream jobs\n");
-				project.updateNextBuildNumber(parentBuildNumber);
+				if( project.getNextBuildNumber() > parentBuildNumber ) {
+					listener.getLogger().printf("Warning: " + project.getName() + " build number is higher than parents build number\n");
+					listener.getLogger().printf("Warning: " + project.getName() + " build number must be corrected manually\n");
+				}
+				else {
+					listener.getLogger().printf("Synchronizing build number for " + project.getName() + "\n");
+					project.updateNextBuildNumber(parentBuildNumber);
+				}
 			}
 			
 			List<Action> actions = new ArrayList<Action>();
