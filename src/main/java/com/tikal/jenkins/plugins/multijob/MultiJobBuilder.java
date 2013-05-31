@@ -93,6 +93,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 			// Set subjob build number the same as the parent build number, if syncBuildNumbers checkbox is true
 			if( syncBuildNumbers )
 			{
+				// Make sure next build number is lower
 				if( project.getNextBuildNumber() > parentBuildNumber ) {
 					listener.getLogger().printf("Warning: " + project.getName() + " build number is higher than parents build number\n");
 					listener.getLogger().printf("Warning: " + project.getName() + " build number must be corrected manually\n");
