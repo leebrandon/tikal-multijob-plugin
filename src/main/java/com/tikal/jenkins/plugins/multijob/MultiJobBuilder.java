@@ -79,10 +79,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		List<AbstractProject> projectList = new ArrayList<AbstractProject>();
 		for (AbstractProjectKey projectKey : projects.keySet()) {
 			AbstractProject project = projectKey.getProject();
-			
-			// Set this the same as the parent build number
-			//project.updateNextBuildNumber( parentBuildNumber);
-			
+
 			listener.getLogger().printf(
 					"Starting build job %s.\n",
 					HyperlinkNote.encodeTo('/' + project.getUrl(),
@@ -97,6 +94,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 				if( project.getNextBuildNumber() > parentBuildNumber ) {
 					listener.getLogger().printf("Warning: " + project.getName() + " build number is higher than parents build number\n");
 					listener.getLogger().printf("Warning: " + project.getName() + " build number must be corrected manually\n");
+					listener.getLogger().printf("Warning: Build numbers not synchronized\n");
 				}
 				else {
 					listener.getLogger().printf("Synchronizing build number for " + project.getName() + "\n");
